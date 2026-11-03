@@ -1,3 +1,5 @@
+using VoiceBot.Domain;
+
 namespace VoiceBot.Services;
 
 public static class BotTexts
@@ -25,4 +27,38 @@ public static class BotTexts
 
     public static string CurrentLanguage(string languageName) =>
         $"Зараз мова запису: {languageName}. {ChooseLanguage}";
+
+    public static string CallSummary(CallRecordEntry call)
+    {
+        var type = call.Type switch
+        {
+            "peerToPeer" => "дзвінок",
+            "groupCall" => "груповий дзвінок або зустріч",
+            _ => "невідомий тип"
+        };
+        var quality = call.Quality switch
+        {
+            CallQuality.Good => "🟢 добра",
+            CallQuality.Poor => $"🔴 погана, потоків: {call.PoorStreams} з {call.AudioStreams}",
+            _ => "⚪ не визначена"
+        };
+
+        var lines = new List<string>
+        {
+            $"📞 Teams: {type}",
+            $"Тривалість: {call.DurationSeconds / 60} хв {call.DurationSeconds % 60} с",
+            $"Учасники ({call.ParticipantCount}): {call.Participants}",
+            $"Якість: {quality}"
+        };
+
+        if (call.Quality == CallQuality.Poor)
+            lines.Add(
+                $"Затримка: {Whole(call.MaxRoundTripMs)} мс, " +
+                $"втрати: {Whole(call.MaxPacketLossRate * 100)}%, " +
+                $"джитер: {Whole(call.MaxJitterMs)} мс");
+
+        return string.Join('\n', lines);
+    }
+
+    private static string Whole(double? value) => value is null ? "?" : Math.Round(value.Value).ToString("0");
 }

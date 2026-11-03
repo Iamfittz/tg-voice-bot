@@ -18,6 +18,13 @@ services:
       - Whisper__BaseUrl=http://whisper-server:8080
       - Whisper__Language=${DEFAULT_LANGUAGE:-uk}
       - ConnectionStrings__Default=Data Source=/data/voicebot.db
+      - Graph__Enabled=${GRAPH_ENABLED:-false}
+      - Graph__TenantId=${GRAPH_TENANT_ID:-}
+      - Graph__ClientId=${GRAPH_CLIENT_ID:-}
+      - Graph__ClientSecret=${GRAPH_CLIENT_SECRET:-}
+      - Graph__ClientState=${GRAPH_CLIENT_STATE:-}
+      - Graph__PublicBaseUrl=${GRAPH_PUBLIC_BASE_URL:-}
+      - Graph__NotifyChatId=${GRAPH_NOTIFY_CHAT_ID:-}
     volumes:
       - voicebot-data:/data
     ports:

@@ -2,6 +2,9 @@
   <Folder Name="/src/">
     <Project Path="src/VoiceBot/VoiceBot.csproj" />
   </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/GraphSimulator/GraphSimulator.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/VoiceBot.Tests/VoiceBot.Tests.csproj" />
   </Folder>

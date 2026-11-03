@@ -1,0 +1,31 @@
+# Runs the Teams call records flow against a local simulator of Microsoft Graph.
+# Needs no Microsoft 365 tenant, Telegram token or speech model.
+name: voice-bot-demo
+
+services:
+  graph-simulator:
+    build:
+      context: .
+      dockerfile: tools/GraphSimulator/Dockerfile
+    ports:
+      - "127.0.0.1:5081:8080"
+
+  voice-bot:
+    build: .
+    depends_on:
+      - graph-simulator
+    environment:
+      - Telegram__Enabled=false
+      - Whisper__BaseUrl=http://localhost:8080
+      - ConnectionStrings__Default=Data Source=/data/voicebot.db
+      - Graph__Enabled=true
+      - Graph__TenantId=00000000-0000-0000-0000-000000000001
+      - Graph__ClientId=demo-client
+      - Graph__ClientSecret=demo-secret
+      - Graph__ClientState=demo-client-state
+      - Graph__PublicBaseUrl=http://voice-bot:8080
+      - Graph__GraphBaseUrl=http://graph-simulator:8080/v1.0/
+      - Graph__LoginBaseUrl=http://graph-simulator:8080/
+      - Graph__NotifyChatId=1
+    ports:
+      - "127.0.0.1:5082:8080"
