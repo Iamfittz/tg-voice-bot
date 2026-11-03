@@ -1,0 +1,33 @@
+services:
+  whisper-server:
+    image: ghcr.io/ggml-org/whisper.cpp:main
+    container_name: whisper-server
+    volumes:
+      - ./models:/models
+    entrypoint: ["whisper-server"]
+    command: ["-m", "/models/ggml-small.bin", "--port", "8080", "--host", "0.0.0.0"]
+    restart: unless-stopped
+
+  voice-bot:
+    build: .
+    container_name: voice-bot
+    depends_on:
+      - whisper-server
+    environment:
+      - Telegram__Token=${TELEGRAM_BOT_TOKEN:?Set TELEGRAM_BOT_TOKEN in .env}
+      - Whisper__BaseUrl=http://whisper-server:8080
+      - Whisper__Language=${DEFAULT_LANGUAGE:-uk}
+      - ConnectionStrings__Default=Data Source=/data/voicebot.db
+    volumes:
+      - voicebot-data:/data
+    ports:
+      - "127.0.0.1:5080:8080"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+
+volumes:
+  voicebot-data:

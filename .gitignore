@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+*.user
+.env
+*.db
+*.db-shm
+*.db-wal
+models/
+jfk.wav
+PROGRESS.md
